@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-console.log(JSON.stingify(process.argv));
+console.log(JSON.stringify(process.argv));
 
 var path = require("path");
 var os = require('os');

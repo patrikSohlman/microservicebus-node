@@ -9,7 +9,10 @@ confinement: devmode
 apps:
   microservicebus-node:
     command: bin/startsnap
-	daemon: simple
+#	daemon: simple
+	environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin/:$PATH
+      PYTHONPATH: $SNAP/usr/lib/python2.7/site-packages:$SNAP/usr/lib/python2.7/dist-packages:$PYTHONPATH
 
 parts:
   node:
