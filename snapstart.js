@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+console.log(JSON.stingify(process.argv));
+
 var path = require("path");
 var os = require('os');
 
