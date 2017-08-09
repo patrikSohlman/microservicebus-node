@@ -24,7 +24,6 @@ SOFTWARE.
 
 'use strict';
 
-console.log(JSON.stringify(process.argv));
 require('colors');
 var util = require('./lib/Utils.js');
 var pjson = require('./package.json');

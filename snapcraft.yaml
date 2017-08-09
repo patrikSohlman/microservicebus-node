@@ -1,6 +1,6 @@
 ﻿name: microservicebus-node
 version: '0.1' 
-summary: ...
+summary: ....
 description: |
   microServiceBus.com ® enables businesses to combine the power of Enterprise Application Integration (EAI) with agility and reach of Internet of Things (IoT). https://microservicebus.com/
 grade: devel 
@@ -9,14 +9,39 @@ confinement: devmode
 apps:
   microservicebus-node:
     command: bin/startsnap
-#	daemon: simple
-	environment:
-      PATH: $SNAP/usr/bin:$SNAP/bin/:$PATH
-      PYTHONPATH: $SNAP/usr/lib/python2.7/site-packages:$SNAP/usr/lib/python2.7/dist-packages:$PYTHONPATH
-
+    plugs:
+    - kernel-module-control
+    - hardware-observe
+    - ubx
+#    - network-manager
+#    - serial-port
+#    - classic-support
+#    daemon: simple
+#    environment:
+#      PATH: $PATH:/var/snap/classic/common/classic/usr/bin
+#      PYTHONPATH: /usr/local/lib/python2.7/sites-packages:$SNAP/usr/lib/python2.7/site-packages:$SNAP/usr/lib/python2.7/dist-packages:$PYTHONPATH
+#      LIBRARY_PATH: $LIBRARY_PATH:/var/snap/classic/common/classic/usr/lib/x86_64-linux-gnu
+#      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/var/snap/classic/common/classic/usr/lib/x86_64-linux-gnu
+#      C_INCLUDE_PATH: $C_INCLUDE_PATH:/var/snap/classic/common/classic/usr/include:/var/snap/classic/common/classic/usr/include/x86_64-linux-gnu
+#      CPLUS_INCLUDE_PATH: $CPLUS_INCLUDE_PATH:/var/snap/classic/common/classic/usr/include:/var/snap/classic/common/classic/usr/include/x86_64-linux-gnu
+#      LDFLAGS: -L/var/snap/classic/common/classic/usr/lib/x86_64-linux-gnu
 parts:
   node:
     source: https://github.com/qbranch-code/microservicebus-node.git
     source-branch: master
     plugin: nodejs
-    node-engine: 7.10
+    node-engine: 7.10.0
+    build-packages: [python2.7, build-essential]
+    stage-packages: [python2.7, build-essential]
+    node-packages: [serialport]
+
+plugs:
+  ubx:
+    interface: serial-port
+
+# snap connect microservicebus-node:kernel-module-control core:kernel-module-control
+# snap connect microservicebus-node:hardware-observe core:hardware-observe
+# snap connect microservicebus-node:client-control core:location-control
+# snap connect microservicebus-node:client-observe core:location-observe	
+# snap connect microservicebus-node:ubx caracalla:ttys4
+
