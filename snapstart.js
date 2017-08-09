@@ -17,6 +17,5 @@ process.env.HOME = os.userInfo().homedir;
 require('app-module-path').addPath(packagePath);
 require('module').globalPaths.push(packagePath);
 
-console.log('packagePath %s', packagePath);
 
 require("./start.js");
