@@ -5,7 +5,12 @@
 var path = require("path");
 var os = require('os');
 
-var packagePath = path.resolve(os.userInfo().homedir, 'node_modules');
+// Load settings 
+var SettingsHelper = require("./lib/SettingsHelper.js");
+var settingsHelper = new SettingsHelper();
+
+var packagePath = settingsHelper.nodePackagePath;
+
 process.env.NODE_PATH = packagePath;
 process.env.HOME = os.userInfo().homedir;
 
