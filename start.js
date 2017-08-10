@@ -162,10 +162,13 @@ function start(d) {
     console.log(util.padRight(" Node.js version    : " + process.version, maxWidth, ' ').bgBlue.white);
     console.log(util.padRight(" NPM package version: " + pjson.version, maxWidth, ' ').bgBlue.white);
     console.log(util.padRight(" Architecture       : " + process.arch, maxWidth, ' ').bgBlue.white);
+    console.log(util.padRight(" Agent host         : " + settingsHelper.agentHost, maxWidth, ' ').bgBlue.white);
+    console.log(util.padRight(" Home directory     : " + settingsHelper.homeDirectory, maxWidth, ' ').bgBlue.white);
+    console.log(util.padRight(" NPM directory      : " + settingsHelper.nodePackagePath, maxWidth, ' ').bgBlue.white);
     console.log(util.padRight(" For more information visit: http://microservicebus.com", maxWidth, ' ').bgBlue.white);
     console.log(util.padRight(" GIT repository: https://github.com/qbranch-code/microservicebus-node", maxWidth, ' ').bgBlue.white);
     console.log(util.padRight("", maxWidth, ' ').bgBlue.white.bold);
-
+    
     console.log();
 
     // Check if there is a later npm package
@@ -206,10 +209,9 @@ function start(d) {
             // Check if node is started as Snap
             if (process.argv[1].endsWith("startsnap")) {
                 //console.log("Loading microservicebus-core/package.json for snap");
-                packageFile = path.resolve(require('os').userInfo().homedir, 'node_modules/microservicebus-core/package.json');
+                packageFile = path.resolve(settingsHelper.nodePackagePath, 'microservicebus-core/package.json');
             }
             
-
             var corePjson;
 
             if (fs.existsSync(packageFile)) {
