@@ -218,7 +218,7 @@ function start(d) {
                 corePjson = require(packageFile);
             }
 
-            var latest = rawData['dist-tags'].beta;
+            var latest = rawData['dist-tags'].latest;
 
             if (corePjson === undefined || util.compareVersion(corePjson.version, latest) < 0) {
                 var version = corePjson === undefined ? "NONE" : corePjson.version;
