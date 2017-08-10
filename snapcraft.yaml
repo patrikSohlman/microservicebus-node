@@ -12,12 +12,13 @@ apps:
     plugs:
     - kernel-module-control
     - hardware-observe
-    - ubx
-#    - network-manager
-#    - serial-port
-#    - classic-support
+    - serial-port
+    - home
+    - network
+    - network-bind
 #    daemon: simple
 #    environment:
+#       NODE_DEBUG: module
 #      PATH: $PATH:/var/snap/classic/common/classic/usr/bin
 #      PYTHONPATH: /usr/local/lib/python2.7/sites-packages:$SNAP/usr/lib/python2.7/site-packages:$SNAP/usr/lib/python2.7/dist-packages:$PYTHONPATH
 #      LIBRARY_PATH: $LIBRARY_PATH:/var/snap/classic/common/classic/usr/lib/x86_64-linux-gnu
@@ -31,17 +32,15 @@ parts:
     source-branch: master
     plugin: nodejs
     node-engine: 7.10.0
-    build-packages: [python2.7, build-essential]
     stage-packages: [python2.7, build-essential]
     node-packages: [serialport]
 
-plugs:
-  ubx:
-    interface: serial-port
+#plugs:
+#  ttys4:
+#    interface: serial-port
+#    path: /dev/ttyS4
 
-# snap connect microservicebus-node:kernel-module-control core:kernel-module-control
-# snap connect microservicebus-node:hardware-observe core:hardware-observe
-# snap connect microservicebus-node:client-control core:location-control
-# snap connect microservicebus-node:client-observe core:location-observe	
-# snap connect microservicebus-node:ubx caracalla:ttys4
+# sudo snap connect microservicebus-node:kernel-module-control core:kernel-module-control
+# sudo snap connect microservicebus-node:hardware-observe core:hardware-observe
+# sudo snap connect microservicebus-node:serial-port caracalla:ttys4
 
