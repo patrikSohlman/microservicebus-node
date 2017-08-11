@@ -37,3 +37,4 @@ typings
 coverage
 *.bat
 package-lock.json
+settings.json
