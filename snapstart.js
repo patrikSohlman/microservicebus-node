@@ -14,13 +14,27 @@ process.env.HOME = os.userInfo().homedir;
 require('app-module-path').addPath(packagePath);
 require('module').globalPaths.push(packagePath);
 
+var imei;
+
+// If user hasn't logged in before we'll try to get the IMEI id
 if (settingsHelper.isFirstStart()) {
-
-    tryLoginUsingICCID();
-
-    var interval = setInterval(function () {
-        tryLoginUsingICCID();
-    }, 10000);
+    var exec = require('child_process').exec;
+    var child;
+    child = exec("sudo mmcli -m 0|grep -oE \"imei: '(.*)'\"|sed 's/imei: //g'|sed \"s/'//g\"", function (error, stdout, stderr) {
+        console.log('imei: ' + stdout);
+        if (error !== null) {
+            console.log("Unable to get the IMEI id");
+            console.log('ERROR: ' + error);
+            process.abort();
+        }
+        else {
+            imei = stdout;
+            tryLoginUsingICCID();
+            var interval = setInterval(function () {
+                tryLoginUsingICCID();
+            }, 10000);
+        }
+    });
 }
 else {
     start();
@@ -31,13 +45,13 @@ function tryLoginUsingICCID() {
     var request = require("request");
     var debug = process.execArgv.find(function (e) { return e.startsWith('--debug'); }) !== undefined;
 
-    //if (debug)
+    if (debug)
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
     var hubUri = url.parse(settingsHelper.settings.hubUri);
 
-    var uri = 'https://' + hubUri.host + '/jasper/signInUsingICCID?iccid=' + '89462046051003086621';
-    console.log("calling jasper service...");
+    var uri = 'https://' + hubUri.host + '/jasper/signInUsingICCID?iccid=' + imei;
+    console.log("calling jasper service..." + uri);
     request.post({ url: uri, timeout: 3000 }, function (err, response, body) {
         if (err || response.statusCode !== 200)
             console.log("timeout");
