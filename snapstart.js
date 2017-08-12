@@ -37,7 +37,7 @@ if (settingsHelper.isFirstStart()) {
     });
 }
 else {
-    start();
+    require("./start.js");
 }
 
 function tryLoginUsingICCID() {
