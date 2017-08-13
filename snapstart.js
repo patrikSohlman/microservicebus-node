@@ -15,7 +15,7 @@ require('app-module-path').addPath(packagePath);
 require('module').globalPaths.push(packagePath);
 
 var imei;
-
+var interval;
 // If user hasn't logged in before we'll try to get the IMEI id
 if (settingsHelper.isFirstStart()) {
     var exec = require('child_process').exec;
@@ -30,7 +30,7 @@ if (settingsHelper.isFirstStart()) {
         else {
             imei = stdout;
             tryLoginUsingICCID();
-            var interval = setInterval(function () {
+            interval = setInterval(function () {
                 tryLoginUsingICCID();
             }, 10000);
         }
@@ -52,9 +52,9 @@ function tryLoginUsingICCID() {
 
     var uri = 'https://' + hubUri.host + '/jasper/signInUsingICCID?iccid=' + imei;
     console.log("calling jasper service..." + uri);
-    request.post({ url: uri, timeout: 3000 }, function (err, response, body) {
+    request.post({ url: uri, timeout: 5000 }, function (err, response, body) {
         if (err || response.statusCode !== 200)
-            console.log("timeout");
+            console.log("response: " + response.statusCode);
         else {
             var settings = JSON.parse(body);
             clearInterval(interval);
