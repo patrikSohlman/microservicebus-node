@@ -89,8 +89,20 @@ function startWithoutDebug() {
                 cluster.setupMaster({
                     execArgv: fixedExecArgv
                 });
-                var DebugHost = require("microservicebus-core").DebugClient;
 
+                // We loose out env settings on dropping the cluster node
+                if (settingsHelper.isRunningAsSnap) {
+                    var packagePath = settingsHelper.nodePackagePath;
+
+                    process.env.NODE_PATH = packagePath;
+                    process.env.HOME = os.userInfo().homedir;
+
+                    require('app-module-path').addPath(packagePath);
+                    require('module').globalPaths.push(packagePath);
+                }
+
+                var DebugHost = require("microservicebus-core").DebugClient;
+                
                 try {
                     debugHost = new DebugHost(settingsHelper);
                 }
