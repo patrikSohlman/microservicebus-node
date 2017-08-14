@@ -9,6 +9,7 @@ confinement: devmode
 apps:
   microservicebus-node:
     command: bin/startsnap
+#    daemon: simple
     plugs:
     - kernel-module-control
     - hardware-observe
@@ -16,7 +17,8 @@ apps:
     - home
     - network
     - network-bind
-#    daemon: simple
+    - modem-manager
+
 #    environment:
 #       NODE_DEBUG: module
 #      PATH: $PATH:/var/snap/classic/common/classic/usr/bin
@@ -32,6 +34,7 @@ parts:
     source-branch: master
     plugin: nodejs
     node-engine: 7.10.0
+#    build-packages: [python2.7, build-essential]
     stage-packages: [python2.7, build-essential]
     node-packages: [serialport]
 

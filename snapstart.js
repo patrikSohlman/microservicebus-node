@@ -3,21 +3,34 @@
 var path = require("path");
 var os = require('os');
 var interval;
+var imei;
+var interval;
+
+var debug = process.execArgv.find(function (e) { return e.startsWith('--debug'); }) !== undefined;
+
 // Load settings 
 var SettingsHelper = require("./lib/SettingsHelper.js");
 var settingsHelper = new SettingsHelper();
-var packagePath = settingsHelper.nodePackagePath;
 
-process.env.NODE_PATH = packagePath;
-process.env.HOME = os.userInfo().homedir;
+if (!debug) {
+    var packagePath = settingsHelper.nodePackagePath;
 
-require('app-module-path').addPath(packagePath);
-require('module').globalPaths.push(packagePath);
+    process.env.NODE_PATH = packagePath;
+    process.env.HOME = os.userInfo().homedir;
 
-var imei;
-var interval;
+    require('app-module-path').addPath(packagePath);
+    require('module').globalPaths.push(packagePath);
+}
+
 // If user hasn't logged in before we'll try to get the IMEI id
 if (settingsHelper.isFirstStart()) {
+
+    if (debug) {
+        imei = "014752000022947";
+        tryLoginUsingICCID();
+        return;
+    }
+
     var exec = require('child_process').exec;
     var child;
     child = exec("sudo mmcli -m 0|grep -oE \"imei: '(.*)'\"|sed 's/imei: //g'|sed \"s/'//g\"", function (error, stdout, stderr) {
@@ -43,7 +56,7 @@ else {
 function tryLoginUsingICCID() {
     var url = require('url');
     var request = require("request");
-    var debug = process.execArgv.find(function (e) { return e.startsWith('--debug'); }) !== undefined;
+    
 
     if (debug)
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
