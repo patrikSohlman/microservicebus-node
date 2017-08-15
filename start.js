@@ -82,8 +82,9 @@ function startWithoutDebug() {
         });
 
         cluster.on('message', function (msg) {
-            console.log('cluster got message');
+            console.log('cluster got message: ' + msg);
             if (debugHost == undefined) {
+                console.log('Setting up debugHost');
                 fixedExecArgv.push('--debug-brk');
 
                 cluster.setupMaster({
@@ -112,10 +113,12 @@ function startWithoutDebug() {
                     if (!debugHost) {
                         throw ("debugHost not found");
                     }
+                    console.log(util.padRight(" debugHost set", maxWidth, ' ').bgGreen.white.bold);
                 }
                 catch (exx)
                 {
-                    console.log("ERROR: " + exx);
+                    console.log(util.padRight(" ERROR", maxWidth, ' ').bgRed.white.bold);
+                    console.log(exx);
 
                     cluster.setupMaster({
                         execArgv: []
@@ -146,6 +149,7 @@ function startWithoutDebug() {
                 });
             }
             else {
+                console.log('debugHost already set');
                 debugHost.Stop(function () {
                     cluster.setupMaster({
                         execArgv: []
