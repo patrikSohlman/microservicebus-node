@@ -91,19 +91,21 @@ function startWithoutDebug() {
                     execArgv: fixedExecArgv
                 });
 
-                // We loose out env settings on dropping the cluster node
-                if (settingsHelper.isRunningAsSnap) {
-                    var packagePath = settingsHelper.nodePackagePath;
+                //// We loose out env settings on dropping the cluster node
+                //if (settingsHelper.isRunningAsSnap) {
+                //    var packagePath = settingsHelper.nodePackagePath;
 
-                    process.env.NODE_PATH = packagePath;
-                    process.env.HOME = os.userInfo().homedir;
+                //    process.env.NODE_PATH = packagePath;
+                //    process.env.HOME = os.userInfo().homedir;
 
-                    require('app-module-path').addPath(packagePath);
-                    require('module').globalPaths.push(packagePath);
-                }
+                //    require('app-module-path').addPath(packagePath);
+                //    require('module').globalPaths.push(packagePath);
+                //}
 
-                var DebugHost = require("microservicebus-core").DebugClient;
                 try {
+                    console.log('try require DebugHost');
+                    var DebugHost = require("microservicebus-core").DebugClient;
+                    console.log('DebugHost done');
                     if (!DebugClient) {
                         throw ("DebugHost not found");
                     }
