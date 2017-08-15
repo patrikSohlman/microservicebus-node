@@ -35,6 +35,7 @@ var os = require('os');
 var maxWidth = 75;
 var debugPort = 5859;
 
+
 var debug = process.execArgv.find(function (e) {  return e.startsWith('--debug');}) !== undefined;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -100,6 +101,16 @@ function startWithoutDebug() {
 
                         require('app-module-path').addPath(packagePath);
                         require('module').globalPaths.push(packagePath);
+
+                        require('module')._initPaths();
+
+                        console.log();
+                        console.log("GLOBALPATHS: ".bgBlue.white);
+                        for (var i = 0; i < require('module').globalPaths.length; i++) {
+                            console.log(require('module').globalPaths[i].bgBlue.white);
+                        }
+                        console.log();
+
                     }
 
                     console.log("Require DebugHost");
