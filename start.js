@@ -81,68 +81,72 @@ function startWithoutDebug() {
         });
 
         cluster.on('message', function (msg) {
-            if (debugHost == undefined) {
-                fixedExecArgv.push('--debug-brk');
+            try {
+                if (debugHost == undefined) {
+                    fixedExecArgv.push('--debug-brk');
 
-                cluster.setupMaster({
-                    execArgv: fixedExecArgv
-                });
-
-                // We loose out env settings on dropping the cluster node
-                if (settingsHelper.isRunningAsSnap) {
-                    var packagePath = settingsHelper.nodePackagePath;
-
-                    process.env.NODE_PATH = packagePath;
-                    process.env.HOME = os.userInfo().homedir;
-
-                    require('app-module-path').addPath(packagePath);
-                    require('module').globalPaths.push(packagePath);
-                }
-
-                console.log("Require DebugHost");
-                try {
-                    var DebugHost = require("microservicebus-core").DebugClient;
-                    console.log("Require DebugHost done");
-                }
-                catch (error) {
-                    console.log("ERROR: Unable to require DebugHost");
-                    console.log(error);
-
-                }
-
-                debugHost = new DebugHost(settingsHelper);
-                debugHost.OnReady(function () {
-
-                });
-                debugHost.OnStopped(function () {
-                    console.log(util.padRight(" OnStop process triggered", maxWidth, ' ').bgGreen.white.bold);
                     cluster.setupMaster({
-                        execArgv: []
+                        execArgv: fixedExecArgv
                     });
-                    debugHost = undefined;
 
-                    for (var id in cluster.workers) {
-                        console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
-                        cluster.workers[id].process.disconnect();
-                        cluster.workers[id].process.kill('SIGTERM');
-                    }
-                });
-            }
-            else {
-                debugHost.Stop(function () {
-                    cluster.setupMaster({
-                        execArgv: []
-                    });
-                    for (var id in cluster.workers) {
-                        console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
-                        cluster.workers[id].process.disconnect();
-                        cluster.workers[id].process.kill('SIGTERM');
+                    // We loose out env settings on dropping the cluster node
+                    if (settingsHelper.isRunningAsSnap) {
+                        var packagePath = settingsHelper.nodePackagePath;
+
+                        process.env.NODE_PATH = packagePath;
+                        process.env.HOME = os.userInfo().homedir;
+
+                        require('app-module-path').addPath(packagePath);
+                        require('module').globalPaths.push(packagePath);
                     }
 
-                });
+                    console.log("Require DebugHost");
+                    try {
+                        var DebugHost = require("microservicebus-core").DebugClient;
+                        console.log("Require DebugHost done");
+                    }
+                    catch (error) {
+                        console.log("ERROR: Unable to require DebugHost");
+                        console.log(error);
 
+                    }
+
+                    debugHost = new DebugHost(settingsHelper);
+                    debugHost.OnReady(function () {
+
+                    });
+                    debugHost.OnStopped(function () {
+                        console.log(util.padRight(" OnStop process triggered", maxWidth, ' ').bgGreen.white.bold);
+                        cluster.setupMaster({
+                            execArgv: []
+                        });
+                        debugHost = undefined;
+
+                        for (var id in cluster.workers) {
+                            console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
+                            cluster.workers[id].process.disconnect();
+                            cluster.workers[id].process.kill('SIGTERM');
+                        }
+                    });
+                }
+                else {
+                    debugHost.Stop(function () {
+                        cluster.setupMaster({
+                            execArgv: []
+                        });
+                        for (var id in cluster.workers) {
+                            console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
+                            cluster.workers[id].process.disconnect();
+                            cluster.workers[id].process.kill('SIGTERM');
+                        }
+
+                    });
+
+                }
             }
-
+            catch (gerr) {
+                console.log("ERROR (on message): ".bgRed.white + gerr);
+            }
         });
     }
 
