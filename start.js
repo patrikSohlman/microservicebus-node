@@ -102,13 +102,30 @@ function startWithoutDebug() {
                 }
 
                 var DebugHost = require("microservicebus-core").DebugClient;
-                
                 try {
+                    if (!DebugClient) {
+                        throw ("DebugHost not found");
+                    }
+
                     debugHost = new DebugHost(settingsHelper);
+
+                    if (!debugHost) {
+                        throw ("debugHost not found");
+                    }
                 }
                 catch (exx)
                 {
                     console.log("ERROR: " + exx);
+
+                    cluster.setupMaster({
+                        execArgv: []
+                    });
+
+                    for (var id in cluster.workers) {
+                        console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
+                        cluster.workers[id].process.disconnect();
+                        cluster.workers[id].process.kill('SIGTERM');
+                    }
                 }
                 console.log('(message1) debugHost: ' + debugHost);
                 debugHost.OnReady(function () {
