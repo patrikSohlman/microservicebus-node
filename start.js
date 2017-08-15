@@ -82,7 +82,7 @@ function startWithoutDebug() {
         });
 
         cluster.on('message', function (msg) {
-            console.log('cluster got message: ' + msg);
+            console.log('cluster got message: ' + JSON.stringify(msg));
             if (debugHost == undefined) {
                 console.log('Setting up debugHost');
                 fixedExecArgv.push('--debug-brk');
