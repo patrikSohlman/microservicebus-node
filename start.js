@@ -59,7 +59,7 @@ function startWithoutDebug() {
 
         cluster.on('exit', function (worker, code, signal) {
             worker = cluster.fork();
-            console.log('cluster exit');
+
             if (cluster.settings.execArgv.find(function (e) { return e.startsWith('--debug'); }) !== undefined) {
 
                 console.log();
@@ -68,7 +68,6 @@ function startWithoutDebug() {
                 console.log(util.padRight("", maxWidth, ' ').bgGreen.white.bold);
                 console.log();
 
-                console.log('(exit) debugHost: ' + debugHost);
                 debugHost.Start(debugPort);
                 debugPort++;
             }
@@ -82,57 +81,25 @@ function startWithoutDebug() {
         });
 
         cluster.on('message', function (msg) {
-            console.log('cluster got message: ' + JSON.stringify(msg));
             if (debugHost == undefined) {
-                console.log('Setting up debugHost');
                 fixedExecArgv.push('--debug-brk');
 
                 cluster.setupMaster({
                     execArgv: fixedExecArgv
                 });
 
-                //// We loose out env settings on dropping the cluster node
-                //if (settingsHelper.isRunningAsSnap) {
-                //    var packagePath = settingsHelper.nodePackagePath;
-
-                //    process.env.NODE_PATH = packagePath;
-                //    process.env.HOME = os.userInfo().homedir;
-
-                //    require('app-module-path').addPath(packagePath);
-                //    require('module').globalPaths.push(packagePath);
-                //}
-
+                console.log("Require DebugHost");
                 try {
-                    console.log('try require DebugHost');
                     var DebugHost = require("microservicebus-core").DebugClient;
-                    console.log('DebugHost done');
-                    if (!DebugClient) {
-                        throw ("DebugHost not found");
-                    }
-
-                    debugHost = new DebugHost(settingsHelper);
-
-                    if (!debugHost) {
-                        throw ("debugHost not found");
-                    }
-                    console.log(util.padRight(" debugHost set", maxWidth, ' ').bgGreen.white.bold);
+                    console.log("Require DebugHost done");
                 }
-                catch (exx)
-                {
-                    console.log(util.padRight(" ERROR", maxWidth, ' ').bgRed.white.bold);
-                    console.log(exx);
+                catch (error) {
+                    console.log("ERROR: Unable to require DebugHost");
+                    console.log(error);
 
-                    cluster.setupMaster({
-                        execArgv: []
-                    });
-
-                    for (var id in cluster.workers) {
-                        console.log(util.padRight(" Killing", maxWidth, ' ').bgGreen.white.bold);
-                        cluster.workers[id].process.disconnect();
-                        cluster.workers[id].process.kill('SIGTERM');
-                    }
                 }
-                console.log('(message1) debugHost: ' + debugHost);
+
+                debugHost = new DebugHost(settingsHelper);
                 debugHost.OnReady(function () {
 
                 });
@@ -151,7 +118,6 @@ function startWithoutDebug() {
                 });
             }
             else {
-                console.log('debugHost already set');
                 debugHost.Stop(function () {
                     cluster.setupMaster({
                         execArgv: []
@@ -161,9 +127,11 @@ function startWithoutDebug() {
                         cluster.workers[id].process.disconnect();
                         cluster.workers[id].process.kill('SIGTERM');
                     }
+
                 });
+
             }
-            console.log('(message) debugHost: ' + debugHost);
+
         });
     }
 
