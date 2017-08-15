@@ -104,12 +104,12 @@ function startWithoutDebug() {
 
                         require('module')._initPaths();
 
-                        console.log();
-                        console.log("GLOBALPATHS: ".bgBlue.white);
-                        for (var i = 0; i < require('module').globalPaths.length; i++) {
-                            console.log(require('module').globalPaths[i].bgBlue.white);
-                        }
-                        console.log();
+                        //console.log();
+                        //console.log("GLOBALPATHS: ".bgBlue.white);
+                        //for (var i = 0; i < require('module').globalPaths.length; i++) {
+                        //    console.log(require('module').globalPaths[i].bgBlue.white);
+                        //}
+                        //console.log();
 
                     }
 
