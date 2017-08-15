@@ -30,6 +30,8 @@ var pjson = require('./package.json');
 var checkVersion = require('package-json');
 var npm = require('npm');
 var fs = require('fs');
+var os = require('os');
+
 var maxWidth = 75;
 var debugPort = 5859;
 
