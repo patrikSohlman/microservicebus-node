@@ -4,6 +4,7 @@ var path = require("path");
 var os = require('os');
 var url = require('url');
 var request = require("request");
+var exec = require('child_process').exec;
 var debug = process.execArgv.find(function (e) { return e.startsWith('--debug'); }) !== undefined;
 
 // Load settings 
