@@ -66,8 +66,10 @@ function tryLoginUsingICCID() {
     var uri = 'https://' + hubUri.host + '/jasper/signInUsingICCID?iccid=' + imei;
     console.log("calling jasper service..." + uri);
     request.post({ url: uri, timeout: 5000 }, function (err, response, body) {
-        if (err || response.statusCode !== 200)
-            console.log("response: " + response.statusCode);
+        if (err)
+            console.error("ERROR: error: " + err);
+        else if (response.statusCode !== 200)
+            console.error("FAILED: response: " + response.statusCode);
         else {
             var settings = JSON.parse(body);
             clearInterval(interval);
