@@ -85,8 +85,7 @@ function SnapLoginHandler(settingsHelper) {
             }
             else {
                 console.log("STARTSNAP: Got settings from microServiceBus.com. All good...");
-                console.log("STARTSNAP: _jasperInterval = " + _jasperInterval);
-                clearInterval(_jasperInterval);
+
                 var settings = JSON.parse(body);
                 settingsHelper.settings.id = settings.id;
                 settingsHelper.settings.nodeName = settings.nodeName;
