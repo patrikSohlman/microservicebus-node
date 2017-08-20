@@ -32,13 +32,13 @@ var npm = require('npm');
 var fs = require('fs');
 var os = require('os');
 
+var microServiceBusHost;
 var maxWidth = 75;
 var debugPort = 5859;
-
-
 var debug = process.execArgv.find(function (e) {  return e.startsWith('--debug');}) !== undefined;
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+if (debug)
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Load settings 
 var SettingsHelper = require("./lib/SettingsHelper.js");
@@ -103,14 +103,6 @@ function startWithoutDebug() {
                         require('module').globalPaths.push(packagePath);
 
                         require('module')._initPaths();
-
-                        //console.log();
-                        //console.log("GLOBALPATHS: ".bgBlue.white);
-                        //for (var i = 0; i < require('module').globalPaths.length; i++) {
-                        //    console.log(require('module').globalPaths[i].bgBlue.white);
-                        //}
-                        //console.log();
-
                     }
 
                     console.log("Require DebugHost");
@@ -199,7 +191,6 @@ function start(d) {
     console.log(util.padRight(" For more information visit: http://microservicebus.com", maxWidth, ' ').bgBlue.white);
     console.log(util.padRight(" GIT repository: https://github.com/qbranch-code/microservicebus-node", maxWidth, ' ').bgBlue.white);
     console.log(util.padRight("", maxWidth, ' ').bgBlue.white.bold);
-    
     console.log();
 
     // Check if there is a later npm package
@@ -218,19 +209,6 @@ function start(d) {
             }
         });
     
-    var MicroServiceBusHost = require("./lib/microServiceBusHost.js");
-    var microServiceBusHost = new MicroServiceBusHost(settingsHelper);
-
-    microServiceBusHost.OnStarted(function (loadedCount, exceptionCount) {
-        
-    });
-    microServiceBusHost.OnStopped(function () {
-
-    });
-    microServiceBusHost.OnUpdatedItineraryComplete(function () {
-
-    });
-
     checkVersion("microservicebus-core")
         .then(function (rawData) {
 
@@ -249,7 +227,7 @@ function start(d) {
                 corePjson = require(packageFile);
             }
 
-            var latest = rawData['dist-tags'].latest;
+            var latest = rawData['dist-tags'].beta;
 
             if (corePjson === undefined || util.compareVersion(corePjson.version, latest) < 0) {
                 var version = corePjson === undefined ? "NONE" : corePjson.version;
@@ -261,18 +239,33 @@ function start(d) {
                 console.log();
                 //console.log("Start installing core".bgRed.white);
                 
-                util.addNpmPackage("microservicebus-core@latest", true, function (err) {
+                util.addNpmPackage("microservicebus-core@beta", true, function (err) {
                     if (err) {
                         console.log("Unable to install core update".bgRed.white);
                         console.log("Error: " + err);
                     }
                     else {
                         console.log("Core installed successfully".bgRed.white);
+
+                        var MicroServiceBusHost = require("microservicebus-core").Host;
+                        var microServiceBusHost = new MicroServiceBusHost(settingsHelper);
+
+                        microServiceBusHost.OnStarted(function (loadedCount, exceptionCount) {
+
+                        });
+                        microServiceBusHost.OnStopped(function () {
+
+                        });
+                        microServiceBusHost.OnUpdatedItineraryComplete(function () {
+
+                        });
                         microServiceBusHost.Start();
                     }
                 });
             }
             else {
+                var MicroServiceBusHost = require("microservicebus-core").Host;
+                var microServiceBusHost = new MicroServiceBusHost(settingsHelper);
                 microServiceBusHost.Start(d);
             }
         });
