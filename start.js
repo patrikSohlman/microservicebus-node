@@ -107,7 +107,7 @@ function startWithoutDebug() {
 
                     console.log("Require DebugHost");
                     try {
-                        var DebugHost = require("microservicebus-core").DebugClient;
+                        var DebugHost = require("microservicebus-core").DebugHost;
                         console.log("Require DebugHost done");
                     }
                     catch (error) {
@@ -115,7 +115,7 @@ function startWithoutDebug() {
                         console.log(error);
 
                     }
-
+                    
                     debugHost = new DebugHost(settingsHelper);
                     debugHost.OnReady(function () {
 
